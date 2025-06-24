@@ -57,3 +57,11 @@ class BasePage:
             return True
         except TimeoutException:
             return False
+
+    @allure.step("Проверяем, что в URL содержится подстрока: {substring}")
+    def current_url_contains(self, substring: str, timeout=10) -> bool:
+        try:
+            WebDriverWait(self.driver, timeout).until(lambda d: substring in d.current_url)
+            return True
+        except TimeoutException:
+            return False
