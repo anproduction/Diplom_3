@@ -7,6 +7,34 @@ from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 import allure
+from pages.main_page import MainPage
+from pages.feed_page import FeedPage
+from pages.auth_page import AuthPage
+from data import EXISTING_USER
+
+
+@pytest.fixture(scope="function")
+def main_page(browser):
+    page = MainPage(browser)
+    page.open_main_page()
+    return page
+
+@pytest.fixture(scope="function")
+def feed_page(browser):
+    return FeedPage(browser)
+
+
+@pytest.fixture(scope="function")
+def authorized_main_page(browser):
+    auth_page = AuthPage(browser)
+    main_page = MainPage(browser)
+    feed_page = FeedPage(browser)
+
+    auth_page.open("/login")
+    with allure.step("Авторизация существующим пользователем"):
+        auth_page.login(EXISTING_USER['email'], EXISTING_USER['password'])
+    main_page.open_main_page()
+    return main_page, feed_page
 
 
 def pytest_addoption(parser):
